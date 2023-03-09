@@ -14,8 +14,15 @@ class Message(BaseModel):
 app = FastAPI()
 
 # route pour un message de bienvenue à l'adresse racine
-@app.get("/api")
+welcome_message = 'Bienvenue sur Nanny! Entrer /api ou /api/nannies pour avoir tous les assistants maternels à domicile ou /api/mams pour avoir tous les assistants maternels en mam'
+@app.get("/")
 async def Welcome():
+    return welcome_message
+
+
+# route pour un message de bienvenue à l'adresse racine
+@app.get("/api")
+async def Welcome_api():
     return {"Bienvenue sur la Nanny API"}
 
 
