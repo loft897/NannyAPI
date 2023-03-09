@@ -1,0 +1,16 @@
+{
+    "name": "NannyAPI_BLACK",
+    "description": "api des assistants maternels a domicile et en MAM dans Macon et les autres communes du Maconnais Agglomeration",
+    "keywords": ["fastapi", "python"],
+    "repository": "https://github.com/loft897/NannyAPI_BACK.git",
+    "env": {
+      "PYTHONUNBUFFERED": "1"
+    },
+    "stack": "container",
+    "buildpacks": [
+      {
+        "url": "heroku/python"
+      }
+    ]
+  }
+  
