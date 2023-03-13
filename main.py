@@ -34,12 +34,12 @@ async def get_all():
     return await NannyModelIn_pydantic.from_queryset(NannyModel.all())
 
 # route pour récupérer une nounou à partir de son id
-@app.get("/api/nannies?id={id}", response_model=NannyModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
+@app.get("/api/nannies/id={id}", response_model=NannyModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
 async def get_one(id: int):
     # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
     return await NannyModelIn_pydantic.from_queryset_single(NannyModel.get(id = id))
 
-@app.get("/api/nannies?city={city}")
+@app.get("/api/nannies/city={city}")
 async def get_by_city(city: str):
     # Initialisation d'une liste vide pour stocker les nounous de la ville donnée
     nannies = []
@@ -91,12 +91,12 @@ async def get_all():
     return await MamModelIn_pydantic.from_queryset(MamModel.all())
 
 # route pour récupérer une mam à partir de son id
-@app.get("/api/mams?id={id}", response_model=MamModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
+@app.get("/api/mams/id={id}", response_model=MamModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
 async def get_one(id: int):
     # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
     return await MamModelIn_pydantic.from_queryset_single(MamModel.get(id = id))
 
-@app.get("/api/mams?city={city}")
+@app.get("/api/mams/city={city}")
 async def get_by_city(city: str):
     # Initialisation d'une liste vide pour stocker les mams de la ville donnée
     mams = []
