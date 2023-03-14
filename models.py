@@ -17,7 +17,6 @@ class NannyModel(models.Model):
     class PydanticMeta:
         pass
 
-
 # Définition de la classe MamModel héritant de la classe models.Model
 class MamModel(models.Model):
     # Définition des attributs de la classe
@@ -37,10 +36,11 @@ class MamModel(models.Model):
 # Création de la classe Pydantic pour le modèle NannyModel
 NannyModel_pydantic = pydantic_model_creator(NannyModel, name="NannyName")
 # Création de la classe Pydantic pour l'entrée de NannyModel
-NannyModelIn_pydantic = pydantic_model_creator(NannyModel, name="NannyIn", exclude_readonly=True)
+NannyModelIn_pydantic = pydantic_model_creator(NannyModel, name="NannyIn", exclude_readonly=False)
 
 # Création de la classe Pydantic pour le modèle MamModel
 MamModel_pydantic = pydantic_model_creator(MamModel, name="MamName")
 # Création de la classe Pydantic pour l'entrée de MamModel
-MamModelIn_pydantic = pydantic_model_creator(MamModel, name="MamIn", exclude_readonly=True)
+MamModelIn_pydantic = pydantic_model_creator(MamModel, name="MamIn", exclude_readonly=False)
 # Le paramètre exclude_readonly=True spécifie que le modèle TodoIn_pydantic ne doit pas inclure le champ id, car il s'agit d'un champ en lecture seule (il est généré automatiquement par la base de données et ne doit pas être modifié par l'utilisateur).
+

@@ -1,5 +1,7 @@
+from typing import Union
 # importation des modules nécessaires
 from fastapi import FastAPI, HTTPException
+from typing import Optional
 from typing import List
 import uvicorn
 from tortoise.contrib.fastapi import HTTPNotFoundError, register_tortoise
@@ -27,30 +29,36 @@ async def Welcome_api():
 
 
 
-# route pour récupérer toutes les nounous
-@app.get("/api/nannies", response_model=List[NannyModelIn_pydantic])
-async def get_all():
-    # récupération de tous les objets NannyModel dans la base de données et retourne une liste de représentations en Pydantic des objets récupérés
-    return await NannyModelIn_pydantic.from_queryset(NannyModel.all())
-
-# route pour récupérer une nounou à partir de son id
-@app.get("/api/nannies/id={id}", response_model=NannyModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
-async def get_one(id: int):
-    # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
-    return await NannyModelIn_pydantic.from_queryset_single(NannyModel.get(id = id))
 
 @app.get("/api/nannies")
-async def get_by_city(city: str):
-    # Initialisation d'une liste vide pour stocker les nounous de la ville donnée
-    nannies = []
-    # Itération sur toutes les instances de la classe NannyModel
-    for nanny in await NannyModelIn_pydantic.from_queryset(NannyModel.all()):
-        # Vérification si la ville donnée correspond à la ville de la nounou
-        if f'{city}'.upper() == nanny.city:
-            # Ajout de la nounou à la liste des nounous de la ville donnée
-            nannies.append(nanny)
-    # Renvoi de la liste des nounous de la ville donnée
-    return nannies
+async def get_nannies(id: Union[int, None] = None, city: Union[str, None] = None):
+    if id is not None:
+        # récupération de l'objet dans la base de données à partir de son id
+        nanny = await NannyModelIn_pydantic.from_queryset_single(NannyModel.get(id=id))
+        if nanny is not None:
+            # Retourne la représentation en Pydantic de l'objet récupéré avec l'id donné
+            return nanny
+        else:
+            # Retourne une erreur 404 si l'id ne correspond à aucune nounou dans la base de données
+            raise HTTPNotFoundError(detail="Nanny not found")
+
+    elif city is not None:
+        # Initialisation d'une liste vide pour stocker les nounous de la ville donnée
+        nannies = []
+        # Itération sur toutes les instances de la classe NannyModel
+        for nanny in await NannyModelIn_pydantic.from_queryset(NannyModel.all()):
+            # Vérification si la ville donnée correspond à la ville de la nounou
+            if f'{city}'.upper() == nanny.city:
+                # Ajout de la nounou à la liste des nounous de la ville donnée
+                nannies.append(nanny)
+        # Renvoi de la liste des nounous de la ville donnée
+        return nannies
+
+    else:
+        # Si ni l'id ni la ville n'ont été spécifiés, retourne toutes les nounous sous forme de liste
+        nannies = await NannyModelIn_pydantic.from_queryset(NannyModel.all())
+        return nannies
+
 
 # route pour créer une nouvelle nounou
 @app.post("/api/nannies/create", response_model=NannyModel_pydantic)
@@ -84,30 +92,26 @@ async def delete_nanny(id: int):
 
 
 
-# route pour récupérer toutes les mams
-@app.get("/api/mams", response_model=List[MamModelIn_pydantic])
-async def get_all():
-    # récupération de tous les objets MamModel dans la base de données et retourne une liste de représentations en Pydantic des objets récupérés
-    return await MamModelIn_pydantic.from_queryset(MamModel.all())
+@app.get("/api/mams")
+async def get_mams(id: Union[int, None] = None, city: Union[str, None] = None):
+    if id:
+        # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
+        return await MamModelIn_pydantic.from_queryset_single(MamModel.get(id=id))
+    elif city:
+        # Initialisation d'une liste vide pour stocker les mams de la ville donnée
+        mams = []
+        # Itération sur toutes les instances de la classe MamModel
+        for mam in await MamModelIn_pydantic.from_queryset(MamModel.all()):
+            # Vérification si la ville donnée correspond à la ville de la mam
+            if f'{city}'.upper() == mam.city:
+                # Ajout de la mam à la liste des mams de la ville donnée
+                mams.append(mam)
+        # Renvoi de la liste des mams de la ville donnée
+        return mams
+    else:
+        # Si ni l'id ni la ville n'ont été spécifiés, ron retourne toute la liste
+        return await MamModelIn_pydantic.from_queryset(MamModel.all())
 
-# route pour récupérer une mam à partir de son id
-@app.get("/api/mams/id={id}", response_model=MamModelIn_pydantic, responses={404: {"model": HTTPNotFoundError}})
-async def get_one(id: int):
-    # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
-    return await MamModelIn_pydantic.from_queryset_single(MamModel.get(id = id))
-
-@app.get("/api/mams/city={city}")
-async def get_by_city(city: str):
-    # Initialisation d'une liste vide pour stocker les mams de la ville donnée
-    mams = []
-    # Itération sur toutes les instances de la classe MamModel
-    for mam in await MamModelIn_pydantic.from_queryset(MamModel.all()):
-        # Vérification si la ville donnée correspond à la ville de la mam
-        if f'{city}'.upper() == mam.city:
-            # Ajout de la mam à la liste des mams de la ville donnée
-            mams.append(mam)
-    # Renvoi de la liste des mams de la ville donnée
-    return mams
 
 # route pour créer une nouvelle mam
 @app.post("/api/mams/create", response_model=MamModel_pydantic)
@@ -150,3 +154,4 @@ register_tortoise(
 )
 
 
+ 
