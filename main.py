@@ -39,7 +39,7 @@ async def get_one(id: int):
     # récupération de l'objet dans la base de données à partir de son id et retourne une représentation en Pydantic de l'objet récupéré
     return await NannyModelIn_pydantic.from_queryset_single(NannyModel.get(id = id))
 
-@app.get("/api/nannies?city={city}")
+@app.get("/api/nannies/{city}")
 async def get_by_city(city: str):
     # Initialisation d'une liste vide pour stocker les nounous de la ville donnée
     nannies = []
